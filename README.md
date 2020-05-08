@@ -60,13 +60,13 @@ In this post I walk through the process of handling unbounded streaming data usi
         init_result.transport.close()
 
 4. Implementing the Writer Subclass
-    Your Writer subclass implements the logic for writing a bundle of elements from a PCollection to output location defined    in your Sink. Services may instantiate multiple instances of your Writer in different threads on the same worker, so          access to any static members or methods must be thread-safe.
+    Your Writer subclass implements the logic for writing a bundle of elements from a PCollection to output location defined     in your Sink. Services may instantiate multiple instances of your Writer in different threads on the same worker, so         access to any static members or methods must be thread-safe.
 
-   To implement a Writer, your subclass must override the following abstract methods:
+    To implement a Writer, your subclass must override the following abstract methods:
 
     write: This method writes a value to your Sink using the current writer.
-
-  close: This method closes the current writer.
+    
+    close: This method closes the current writer.
 
      def __init__(self, client, batch_size=None):
           self.client = client
