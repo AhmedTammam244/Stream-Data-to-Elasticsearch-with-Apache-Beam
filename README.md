@@ -18,7 +18,7 @@ In this post I walk through the process of handling unbounded streaming data usi
     A sequential initialization phase. For example, creating a temporary output directory.
     A parallel write phase where workers write bundles of records.
     A sequential finalization phase. For example, merging output files.
-    For example, if you’d like to write to a new table in a database, you should use the Sink API. In this case, the             initializer will create a temporary table, the writer will write rows to it, and the finalizer will rename the table to a     final location.
+    For example, if you’d like to write to a new table in a database, you should use the Sink API. In this case, the             initializer will create a temporary table, the writer will write rows to it, and the finalizer will rename the table to     a final location.
 
     To create a new data sink for your pipeline, you’ll need to provide the format-specific logic that tells the sink how to     write bounded data from your pipeline’s PCollections to an output sink. The sink writes bundles of data in parallel           using multiple workers.
 
@@ -41,23 +41,23 @@ In this post I walk through the process of handling unbounded streaming data usi
 
     Caution: initialize_write and finalize_write are conceptually called once: at the beginning and end of a Write               transform.     However, when you implement these methods, you must ensure that they are idempotent, as they may be           called multiple times     on different machines in the case of failure, retry, or for redundancy.
 
-    def __init__(self, args):
-        self.args = args
+          def __init__(self, args):
+              self.args = args
 
-    def initialize_write(self):
-        es = Elasticsearch([{'host': self.args["host"], 'port': self.args["port"]}],
-                           http_auth=self.args["http_auth"], scheme=self.args["scheme"])
-        return es
+          def initialize_write(self):
+              es = Elasticsearch([{'host': self.args["host"], 'port': self.args["port"]}],
+                                 http_auth=self.args["http_auth"], scheme=self.args["scheme"])
+              return es
 
-    def open_writer(self, init_result, uid):
-        batch_size = self.args['batch_size'] if 'batch_size' in self.args else None
-        return ElasticSearchWriter(init_result, batch_size)
+          def open_writer(self, init_result, uid):
+              batch_size = self.args['batch_size'] if 'batch_size' in self.args else None
+              return ElasticSearchWriter(init_result, batch_size)
 
-    def pre_finalize(self, init_result, writer_results):
-        pass
+          def pre_finalize(self, init_result, writer_results):
+              pass
 
-    def finalize_write(self, init_result, writer_results, pre_finalize_result):
-        init_result.transport.close()
+          def finalize_write(self, init_result, writer_results, pre_finalize_result):
+              init_result.transport.close()
 
 4. Implementing the Writer Subclass
     Your Writer subclass implements the logic for writing a bundle of elements from a PCollection to output location defined     in your Sink. Services may instantiate multiple instances of your Writer in different threads on the same worker, so         access to any static members or methods must be thread-safe.
@@ -68,18 +68,33 @@ In this post I walk through the process of handling unbounded streaming data usi
     
     close: This method closes the current writer.
 
-     def __init__(self, client, batch_size=None):
-          self.client = client
-          self.batch_size = batch_size
+         def __init__(self, client, batch_size=None):
+              self.client = client
+              self.batch_size = batch_size
 
-      def write(self, value):
-          index_name = value["_index"]
-          del value["_index"]
-          self.client.index(index=index_name, body=value)
+          def write(self, value):
+              index_name = value["_index"]
+              del value["_index"]
+              self.client.index(index=index_name, body=value)
 
-      def close(self):
-          pass
+          def close(self):
+              pass
 
+5. Writing to a New Sink
+  The following code demonstrates how to write to the sink using the Write transform
+  
+        def __int__(self, pcoll, kv_dict):
+            super(ElasticSearchWriter, self).__init__(pcoll, kv_dict)
+
+        def parse(self):
+            self.transformed_p = self.pcoll | "Transforming Records" >> beam.Map(generate_actions)
+
+        def write(self):
+            self.transformed_p = self.transformed_p | "printing Records" >> beam.Map(printing)
+            self.logger.info("writing records to Elastic Search ")
+            self.transformed_p = (self.transformed_p
+                                  | 'Writing [Records] To Elastic Search'
+                                  >> beam.io.Write(ElasticSearchSink(self.kv_dict))
 to run project you must know                   
    1.runner (DirctRunner or DataFlowRunner )   
    2. project name , create topic (good) from https://console.cloud.google.com/cloudpubsub/topic    
