@@ -3,6 +3,12 @@ May 8 ,2020
 Author : Ahmed Tammam     
 In this post I walk through the process of handling unbounded streaming data using Apache Beam, and pushing it to Elasticsearch  as a data warehouse.
 
+1. read from topic pubsub
+  
+2. Creating a New Sink
+3. Implementing the Sink Subclass
+4. Implementing the Writer Subclass
+
  to run project you must know                   
    1.runner (DirctRunner or DataFlowRunner )   
    2. project name , create topic (good) from https://console.cloud.google.com/cloudpubsub/topic    
