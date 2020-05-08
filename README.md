@@ -29,17 +29,17 @@ In this post I walk through the process of handling unbounded streaming data usi
    A subclass of Writer, which you can find in the iobase.py module. Writer writes a bundle of elements from an input            PCollection to your designated data sink. Writer defines two methods: write(), which writes a single record from the          bundle, and close(), which is called once at the end of writing a bundle.
 
 3. Implementing the Sink Subclass
-  Your Sink subclass describes the location or resource to which your pipeline writes its output. This might include a file     system location, the name of a database table or dataset, etc.
+    Your Sink subclass describes the location or resource to which your pipeline writes its output. This might include a         file system location, the name of a database table or dataset, etc.
 
-  To implement a Sink, your subclass must override the following methods:
+    To implement a Sink, your subclass must override the following methods:
 
-  initialize_write: This method performs any necessary initialization before writing to the output location. Services call     this method before writing begins. For example, you can use initialize_write to create a temporary output directory.
+    initialize_write: This method performs any necessary initialization before writing to the output location. Services call     this method before writing begins. For example, you can use initialize_write to create a temporary output directory.
 
-  open_writer: This method enables writing a bundle of elements to the sink.
+    open_writer: This method enables writing a bundle of elements to the sink.
 
-  finalize_write:This method finalizes the sink after all data is written to it. Given the result of initialization and an     iterable of results from bundle writes, finalize_write performs finalization after writing and closes the sink. This         method is called after all bundle write operations are complete.
+    finalize_write:This method finalizes the sink after all data is written to it. Given the result of initialization and an     iterable of results from bundle writes, finalize_write performs finalization after writing and closes the sink. This         method is called after all bundle write operations are complete.
 
-  Caution: initialize_write and finalize_write are conceptually called once: at the beginning and end of a Write transform.     However, when you implement these methods, you must ensure that they are idempotent, as they may be called multiple times     on different machines in the case of failure, retry, or for redundancy.
+    Caution: initialize_write and finalize_write are conceptually called once: at the beginning and end of a Write               transform.     However, when you implement these methods, you must ensure that they are idempotent, as they may be           called multiple times     on different machines in the case of failure, retry, or for redundancy.
 
     def __init__(self, args):
         self.args = args
