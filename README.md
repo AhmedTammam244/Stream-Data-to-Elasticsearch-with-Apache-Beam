@@ -3,6 +3,8 @@ May 8 ,2020
 Author : Ahmed Tammam     
 In this post I walk through the process of handling unbounded streaming data using Apache Beam, and pushing it to Elasticsearch  as a data warehouse.
 
+if you don't install beam please take alook on https://beam.apache.org/get-started/quickstart-py/ 
+
 1. read from topic pubsub     
   it is a streaming pipeline that reads Pub/Sub messages from a Pub/Sub topic.
   
