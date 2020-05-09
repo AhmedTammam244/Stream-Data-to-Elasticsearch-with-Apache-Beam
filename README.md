@@ -1,20 +1,20 @@
 # Stream Data to Elasticsearch with Apache Beam
 May 8 ,2020    
 Author : Ahmed Tammam             
-Thank you Ali Mohamed for your support
+
 
 In this post I walk through the process of handling unbounded streaming data using Apache Beam, and pushing it to Elasticsearch  as a data warehouse.
 
-if you don't install beam please take alook on https://beam.apache.org/get-started/quickstart-py/ 
+install beam  https://beam.apache.org/get-started/quickstart-py/ 
 
-1. read from topic pubsub     
+1. Read messages from a Pub/Sub topic :    
   it is a streaming pipeline that reads Pub/Sub messages from a Pub/Sub topic.
   
             def run(self):
             with beam.Pipeline(options=self.pipeline_args) as pcoll:
                 pcoll = pcoll | beam.io.ReadFromPubSub(self.input_topic)
 
-2. Creating a New Sink
+2. Creating a New Sink :
      You should create a new sink if you’d like to use the advanced features that the Sink API provides, such as global            initialization and finalization that allow the write operation to appear “atomic” (i.e. either all data is written or        none is).
 
     A sink represents a resource that can be written to using the Write transform. A parallel write to a sink consists of         three phases:
@@ -32,7 +32,7 @@ if you don't install beam please take alook on https://beam.apache.org/get-start
 
    A subclass of Writer, which you can find in the iobase.py module. Writer writes a bundle of elements from an input            PCollection to your designated data sink. Writer defines two methods: write(), which writes a single record from the          bundle, and close(), which is called once at the end of writing a bundle.
 
-3. Implementing the Sink Subclass
+3. Implementing the Sink Subclass :
     Your Sink subclass describes the location or resource to which your pipeline writes its output. This might include a         file system location, the name of a database table or dataset, etc.
 
     To implement a Sink, your subclass must override the following methods:
@@ -63,7 +63,7 @@ if you don't install beam please take alook on https://beam.apache.org/get-start
           def finalize_write(self, init_result, writer_results, pre_finalize_result):
               init_result.transport.close()
 
-4. Implementing the Writer Subclass
+4. Implementing the Writer Subclass :
     Your Writer subclass implements the logic for writing a bundle of elements from a PCollection to output location defined     in your Sink. Services may instantiate multiple instances of your Writer in different threads on the same worker, so         access to any static members or methods must be thread-safe.
 
     To implement a Writer, your subclass must override the following abstract methods:
@@ -84,7 +84,7 @@ if you don't install beam please take alook on https://beam.apache.org/get-start
           def close(self):
               pass
 
-5. Writing to a New Sink
+5. Writing to a New Sink :
   The following code demonstrates how to write to the sink using the Write transform
   
         def __int__(self, pcoll, kv_dict):
@@ -99,11 +99,7 @@ if you don't install beam please take alook on https://beam.apache.org/get-start
             self.transformed_p = (self.transformed_p
                                   | 'Writing [Records] To Elastic Search'
                                   >> beam.io.Write(ElasticSearchSink(self.kv_dict))
-to run project you must know                   
-   1.runner (DirctRunner or DataFlowRunner )   
-   2. project name , create topic (good) from https://console.cloud.google.com/cloudpubsub/topic    
-   3. username , password for elasticsearch
-   
+
 # Test ^_^  
      $   #!/usr/bin/env bash     
      $  /home/{machine_name}/miniconda3/envs/rec-3.5/bin/python3  /home/{machine_name}/etl/pubsubToSink.py    \
@@ -116,4 +112,4 @@ to run project you must know
               --project {project_name}       \
               --sink_opts "{'host':'localhost','port':9200,'scheme':'http','http_auth':('username', 'password')}"
   
-refference : http://beam.apachecn.org/documentation/sdks/python-custom-io/
+reference : http://beam.apachecn.org/documentation/sdks/python-custom-io/
