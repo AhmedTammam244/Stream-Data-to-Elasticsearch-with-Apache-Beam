@@ -1,7 +1,5 @@
-
 <img src="https://github.com/AhmedTammam244/Stream-Data-to-Elasticsearch-with-Apache-Beam/blob/master/PubsubToElasticsearch.png"
  alt="PubsubToElasticsearch logo" title="PubsubToElasticsearch" />
-
 # Stream Data to Elasticsearch with Apache Beam
 # problem : if you want your pipeline to read data from (or write data to) a storage system for which the Beam SDK for Python does not provide native support.
 May 11 ,2020    
