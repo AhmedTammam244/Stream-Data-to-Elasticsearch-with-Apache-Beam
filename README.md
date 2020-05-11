@@ -1,4 +1,5 @@
 # Stream Data to Elasticsearch with Apache Beam
+# problem : if you want your pipeline to read data from (or write data to) a storage system for which the Beam SDK for Python does not provide native support.
 May 11 ,2020    
 Author : Ahmed Tammam             
 
