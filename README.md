@@ -1,7 +1,7 @@
 # Stream Data to Elasticsearch with Apache Beam
 May 8 ,2020    
 Author : Ahmed Tammam             
-
+Great Thanks to Ali Mohamed ( https://www.linkedin.com/in/ali-mohamed-332193152/ ) for helping me  to publish this essay
 
 In this post I walk through the process of handling unbounded streaming data using Apache Beam, and pushing it to Elasticsearch  as a data warehouse.
 
